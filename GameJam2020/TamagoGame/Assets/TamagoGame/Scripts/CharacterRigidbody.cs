@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using CommonSystem;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -73,6 +74,151 @@ public class CharacterRigidbody : MonoBehaviour
 
     }
 
+    private void UpdateInGame()
+    {
+		bool isValidInput = false;
+		Vector2 inputDir = VirtualPad.Instance.GetInputDir(out isValidInput);
+
+        // 前進・移動速度制御
+		if ( inputDir.y != 0.0f )
+		{
+			// 前進 
+			if ( 0.0f < inputDir.y )
+			{
+				if ( m_moveSpeed < 0.0f )
+				{
+					m_moveSpeed *= 0.2f;
+				}
+			}
+			// 後退 
+			else
+			{
+				if ( 0.0f < m_moveSpeed )
+				{
+					m_moveSpeed *= 0.2f;
+				}
+			}
+			// 加減速(Limit考慮)
+			m_moveSpeed = Mathf.Clamp(m_moveSpeed + 走る加速度 * inputDir.y * Time.deltaTime, -後退するスピード, 走るスピード);
+		}
+		else
+		{
+			// 地上にいるなら減速 
+			if ( m_isOnGround )
+			{
+				m_moveSpeed *= 0.5f;
+			}
+		}
+
+        // 左右に旋回
+        bool isRot = false;
+		if ( inputDir.x != 0.0f )
+		{
+			transform.Rotate(Vector3.up, 旋回角速度 * inputDir.x * Time.deltaTime);
+			isRot = true;
+		}
+
+        // ジャンプ 
+        if (m_isOnGround && !m_isJumping)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Vector3 jumpSpeed = transform.forward * m_moveSpeed;
+                jumpSpeed.y = ジャンプ力;
+                m_rigidbody.velocity = jumpSpeed;
+                //    m_isOnGround = false;
+                m_isJumping = true;
+                m_jumpingTime = 0.0f;
+            }
+            else
+            {
+                m_rigidbody.velocity = m_rigidbody.velocity * 0.5f;
+            }
+        }
+        else
+        {
+            // 卵を所持中にジャンプボタンを押すと投げる 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (m_handlingEgg != null)
+                {
+                    float speed = m_moveSpeed * 卵を投げる速度と自分の速度の関係;
+                    speed = Mathf.Max(4.0f, speed);
+
+                    // 投擲速度 
+                    Vector3 throwSpeed =
+                        transform.TransformVector(Vector3.forward * speed);
+                    throwSpeed.y = Mathf.Abs(m_moveSpeed) * (卵を投げる速度と自分の速度の関係 * 0.2f);
+                    m_handlingEgg.Throw(throwSpeed);
+                    m_handlingEgg = null;
+
+                }
+            }
+        }
+
+        // 移動速度に応じてアニメーション
+        float abs_speed = Mathf.Abs(m_moveSpeed);
+        if (abs_speed < 0.1f)
+        {
+            if (isRot)
+            {
+                ChangeAnim(ANIM_HASH_WALKING);
+            }
+            else
+            {
+                ChangeAnim(ANIM_HASH_STANDING);
+            }
+            m_animator.speed = 1.0f;
+        }
+        else if (abs_speed < 走るスピード * 0.5f)
+        {
+            ChangeAnim(ANIM_HASH_WALKING);
+            //	Debug.Log("Walking");
+            {
+                float k = abs_speed / 走るスピード * 走るアニメーションスピード;
+                m_animator.speed = k;
+            }
+            //} else
+            //{
+            //          ChangeAnim(ANIM_HASH_RUNNING);
+            //      //    Debug.Log("Running");
+        }
+
+        // ジャンプ中タイマー 
+        if (m_isJumping)
+        {
+            m_jumpingTime += Time.deltaTime;
+            if (3.0f < m_jumpingTime && 0 < m_collisionCount && m_isOnGround )
+			{
+                m_isJumping = false;
+            }
+        }
+
+        // 接地判定
+        //   CheckOnGround();
+        // 移動 
+        if (m_isOnGround)
+        {
+            Vector3 nowPos = m_rigidbody.position;
+            nowPos += transform.forward * (m_moveSpeed * Time.deltaTime);
+			if (nowPos.y < 0.0f)
+			{
+				nowPos.y = 0.0f;
+				//m_rigidbody.MovePosition(nowPos);
+			}
+			//Vector3 vel = transform.forward * m_moveSpeed;
+			//vel.y = m_rigidbody.velocity.y;
+			//m_rigidbody.velocity = vel;
+			m_rigidbody.MovePosition(nowPos);
+        }
+
+        // 卵を持つハンドル位置の更新 
+        UpdateEggHandle();
+
+    }
+
+
+	/*
     private void UpdateInGame()
     {
         // 前進・移動速度制御
@@ -216,9 +362,10 @@ public class CharacterRigidbody : MonoBehaviour
         UpdateEggHandle();
 
     }
+	 */
 
 
-    private Vector3 m_eggHandleLocalPos = new Vector3(0, 0, 0.8f);
+	private Vector3 m_eggHandleLocalPos = new Vector3(0, 0, 0.8f);
     private Vector3 m_eggHandleBodyLocal = new Vector3(0, 0.6f, 0);
 
     /// <summary>

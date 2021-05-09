@@ -54,6 +54,42 @@ namespace CommonSystem
 		// Update is called once per frame
 		void Update()
 		{
+#if UNITY_EDITOR
+			// 新規追加 
+			m_hasNewTouch = false;
+			if ( Input.GetMouseButtonDown(0) )
+			{
+				m_hasNewTouch = true;
+				m_touchDataList.Add(
+					new TouchData
+					{
+						m_phase = TouchPhase.Began,
+						m_position = Input.mousePosition,
+						m_fingerId = 1,
+						m_startTime = Time.time
+					});
+			}
+			else if ( Input.GetMouseButton(0) )
+			{
+				if ( 0 < m_touchDataList.Count )
+				{
+					var touchData = m_touchDataList[0];
+					touchData.m_phase = TouchPhase.Moved;
+					touchData.m_position = Input.mousePosition;
+				}
+			} else
+			{
+				if ( 0 < m_touchDataList.Count )
+				{
+					var touchData = m_touchDataList[0];
+					if ( touchData != null )
+					{
+						touchData.m_phase = TouchPhase.Ended;
+					}
+					m_touchDataList.Clear();
+				}
+			}
+#else
 			// 継続 
 			for (int i=0; i < m_touchDataList.Count; )
 			{
@@ -99,6 +135,7 @@ namespace CommonSystem
 					m_hasNewTouch = true;
 				}
 			}
+#endif
 		}
 
 

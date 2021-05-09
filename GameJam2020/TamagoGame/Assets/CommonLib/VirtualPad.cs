@@ -26,6 +26,11 @@ namespace CommonSystem
 		private Image m_padImage = null;
 		private Vector2 m_canvasSize = Vector2.zero;
 		private TouchData m_currTouchData = null;
+		private RectTransform m_rectTr = null;
+
+		private float m_stickMoveMax = 0.0f;
+		private float m_stickMoveMin = 0.0f;
+		private Vector2 m_inputDir = Vector2.zero;		// VirtualPadの入力結果(-1.0 ～ +1.0)
 
 		private void Awake()
 		{
@@ -45,6 +50,10 @@ namespace CommonSystem
 			Canvas canvas = m_padImage.canvas;
 			m_canvasSize = canvas.GetComponent<RectTransform>().sizeDelta;
 			m_screenToCanvasScale = m_canvasSize.x / (float)Screen.width;
+			m_rectTr = GetComponent<RectTransform>();
+
+			m_stickMoveMax = m_rectTr.sizeDelta.x * 0.4f;
+			m_stickMoveMin = m_rectTr.sizeDelta.x * 0.1f;
 		}
 
 		// Update is called once per frame
@@ -52,6 +61,7 @@ namespace CommonSystem
 		{
 			if (m_touchPhase == TouchPhase.Begin)
 			{
+				// 新規タッチ有の場合のみ 
 				if (TouchManager.Instance.HasNewTouch)
 				{
 					var touchList = TouchManager.Instance.TouchDataList;
@@ -59,19 +69,48 @@ namespace CommonSystem
 					{
 						if (touchData.m_phase == UnityEngine.TouchPhase.Began)
 						{
-							m_currTouchData = touchData;
-							m_touchPhase = TouchPhase.Playing;
-							break;
+							// 領域内か？ 
+							Vector2 touchPos = ScreenToCanvas(touchData.m_position);
+							Vector2 dir = touchPos - m_rectTr.anchoredPosition;
+							if ( dir.magnitude < m_rectTr.sizeDelta.x*0.5f )
+							{
+								m_currTouchData = touchData;
+								m_touchPhase = TouchPhase.Playing;
+								break;
+							}
 						}
 					}
 				}
+				// リセット 
+				m_inputDir = Vector2.zero;
 			}
-			else
+
+			// スティック位置更新 
+			if (m_touchPhase == TouchPhase.Playing )
 			{
+				Vector2 touchPos = ScreenToCanvas(m_currTouchData.m_position);
+				Vector2 dir = touchPos - m_rectTr.anchoredPosition;
+				float length = dir.magnitude;
+				if ( length < m_stickMoveMin )
+				{
+					m_stickTr.anchoredPosition = Vector2.zero;
+					// 入力結果 
+					m_inputDir = Vector2.zero;
+				}
+				else
+				{
+					Vector2	newPos = dir * Mathf.Min(length, m_stickMoveMax) / length;
+					m_stickTr.anchoredPosition = newPos;
+					// 入力結果 
+					m_inputDir = newPos / m_stickMoveMax;
+				}
+
+				// タッチ終了 
 				if ( m_currTouchData.m_phase == UnityEngine.TouchPhase.Ended )
 				{
 					m_currTouchData = null;
 					m_touchPhase = TouchPhase.Begin;
+					m_stickTr.anchoredPosition = Vector2.zero;
 				}
 			}
 
@@ -84,6 +123,35 @@ namespace CommonSystem
 			}
 
 		}
+
+
+		private Vector2	ScreenToCanvas(Vector2 screenPos)
+		{
+			return new Vector2(screenPos.x * m_screenToCanvasScale, screenPos.y * m_screenToCanvasScale);
+		}
+
+
+		/// <summary>
+		/// 入力結果 
+		/// </summary>
+		public Vector2	InputDir
+		{
+			get { return m_inputDir; }
+		}
+
+
+		/// <summary>
+		/// 入力結果を取得 
+		/// </summary>
+		/// <param name="isActive"></param>
+		/// <returns></returns>
+		public Vector2	GetInputDir( out bool isActive )
+		{
+			isActive = (m_touchPhase == TouchPhase.Playing);
+			return m_inputDir;
+		}
+
+
 	}
 
 

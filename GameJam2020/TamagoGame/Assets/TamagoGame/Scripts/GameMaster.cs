@@ -5,6 +5,7 @@
 
 
 
+using CommonSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -177,7 +178,8 @@ public class GameMaster : MonoBehaviour
         m_uiTimeScale = 1.0f;
         while (!isEnd)
         {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+         //   if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+			if ( TouchManager.Instance.HasNewTouch )
             {
                 isEnd = true;
             }
@@ -258,7 +260,8 @@ public class GameMaster : MonoBehaviour
         m_uiTimeScale = 1.0f;
         while (!isEnd)
         {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+        //    if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+			if ( TouchManager.Instance.HasNewTouch )
             {
                 isEnd = true;
             }
