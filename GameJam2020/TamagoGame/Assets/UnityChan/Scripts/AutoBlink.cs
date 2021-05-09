@@ -8,6 +8,7 @@ using System.Collections;
 
 namespace UnityChan
 {
+
 	public class AutoBlink : MonoBehaviour
 	{
 
