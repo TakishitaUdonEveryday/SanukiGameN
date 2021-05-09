@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Logo/Scenes/LogoScene.unity
+    guid: 0b417aa8184e1454bb8c698e562fa50b
+  - enabled: 1
     path: Assets/TamagoGame/Scene/TamagoGame.unity
     guid: 3371259fccfabe34a92fc7bd1c96dd96
   m_configObjects: {}

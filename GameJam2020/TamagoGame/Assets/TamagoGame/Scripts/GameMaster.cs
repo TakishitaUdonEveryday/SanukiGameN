@@ -20,11 +20,11 @@ public class GameMaster : MonoBehaviour
 #if DEBUG_GAME_TIME_INFINITE
     const float GAME_TIME = 60.0f * 1000.0f;
 #else
-    const float GAME_TIME = 60.0f * 3.0f;
-//    const float GAME_TIME = 60.0f * 1.0f;
+	const float GAME_TIME = 60.0f * 3.0f;
+//	const float GAME_TIME = 30.0f;
 #endif
 
-    private GameObject m_playerCharacter = null;
+	private GameObject m_playerCharacter = null;
     [SerializeField] private Transform m_startPosition = null;
     [SerializeField] private Transform m_eggSpawnArea = null;
 
@@ -74,6 +74,7 @@ public class GameMaster : MonoBehaviour
 	};
     private GameStep m_gameStep = GameStep.None;
 
+	private bool m_isStart = false;
 
     private Rect m_eggSpawnRect;    // 卵の出現範囲 
 
@@ -156,7 +157,6 @@ public class GameMaster : MonoBehaviour
 		m_objVirtualPadUI.SetActive(false);
 		m_objButtonUI.SetActive(false);
 
-
 		yield return null;
 
         // ゲームタイトルへ
@@ -180,12 +180,16 @@ public class GameMaster : MonoBehaviour
         m_gameUiNode.SetActive(false);
         m_resultUI.gameObject.SetActive(false);
 
+		// フェードイン 
+		ColorFade.Instance.FadeIn();
+
         bool isEnd = false;
         m_uiTimeScale = 1.0f;
         while (!isEnd)
         {
          //   if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
-			if ( TouchManager.Instance.HasNewTouch )
+		//	if ( TouchManager.Instance.HasNewTouch )
+			if ( m_isStart )
             {
                 isEnd = true;
             }
@@ -283,6 +287,13 @@ public class GameMaster : MonoBehaviour
 
             yield return null;
         }
+
+		// フェードアウト 
+		ColorFade.Instance.FadeOut();
+		while (ColorFade.Instance.IsAnimate)
+		{
+			yield return null;
+		}
 
         // 再起動 
         SceneManager.LoadSceneAsync("TamagoGame");
@@ -393,9 +404,25 @@ public class GameMaster : MonoBehaviour
 
 
 
-    // Update is called once per frame
-    //void Update()
-    //{
+	// Update is called once per frame
+	//void Update()
+	//{
 
-    //}
+	//}
+
+
+	
+	/// <summary>
+	/// 讃岐GameNロゴ 
+	/// </summary>
+	public void OnCallSanukiGameN()
+	{
+		Application.OpenURL("https://sanuki-gamen.jimdofree.com/");
+	}
+
+	public void OnTouchStart()
+	{
+		m_isStart = true;
+	}
+
 }

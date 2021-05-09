@@ -49,6 +49,7 @@ public class GameSaveData : MonoBehaviour
     {   
         // データロード 
         string data = PlayerPrefs.GetString(SAVEDATA_KEY, "");
+		Debug.Log("★SaveData text=" + data);
         if (!string.IsNullOrEmpty(data))
         {
             try
@@ -63,6 +64,13 @@ public class GameSaveData : MonoBehaviour
                 Debug.LogError(e.ToString());
 			}
         }
+
+		Debug.Log("★SaveData : " + m_scoreList.Count);
+		for (int i=0; i < m_scoreList.Count; ++i )
+		{
+			var score = m_scoreList[i];
+			Debug.Log("[" + i + "]" + score.m_score);
+		}
     }
 
 
@@ -110,6 +118,8 @@ public class GameSaveData : MonoBehaviour
 
         string saveStr = JsonUtility.ToJson(savedata);
         PlayerPrefs.SetString(SAVEDATA_KEY, saveStr);
+
+		Debug.Log("★SaveData : Save : " + saveStr);
     }
 
 

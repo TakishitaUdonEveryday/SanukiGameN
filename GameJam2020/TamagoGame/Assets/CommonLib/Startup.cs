@@ -10,6 +10,9 @@ namespace CommonSystem
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		public static void InitializeApplication()
 		{
+			// カラーフェード
+			ColorFade.Create();
+
 			// TouchManager生成 
 			TouchManager.Create();
 		}
