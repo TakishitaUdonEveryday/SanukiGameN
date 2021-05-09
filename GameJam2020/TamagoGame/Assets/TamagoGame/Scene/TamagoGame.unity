@@ -3796,7 +3796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &570763596
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3814,7 +3814,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 8, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 132.66667, y: 35.333332}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &570763597
 MonoBehaviour:
@@ -6563,6 +6563,8 @@ MonoBehaviour:
   m_gameUiNode: {fileID: 439558600}
   m_salesText: {fileID: 1807987204}
   m_resultUI: {fileID: 1586996519}
+  m_objVirtualPadUI: {fileID: 1882460040}
+  m_objButtonUI: {fileID: 1250323941}
   m_bornData:
   - m_name: "\u8C5A"
     m_prefab: {fileID: 8141052924952531306, guid: b84a534b63d29e04fb06c7349009a0cb,
@@ -7255,6 +7257,7 @@ GameObject:
   - component: {fileID: 1250323945}
   - component: {fileID: 1250323944}
   - component: {fileID: 1250323943}
+  - component: {fileID: 1250323946}
   m_Layer: 5
   m_Name: VirtualButton
   m_TagString: Untagged
@@ -7361,6 +7364,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1250323941}
   m_CullTransparentMesh: 0
+--- !u!114 &1250323946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1250323941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26da2d9a36092f0429cbb4670fb8ea45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1252537801 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2820117795590728338, guid: d68684b34e83c774f9f08df07e9b26fb,
@@ -12590,7 +12605,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "- SPACE \u62BC\u3057\u3066\u306D -"
+  m_Text: '- Touch to Start -'
 --- !u!222 &2105532834
 CanvasRenderer:
   m_ObjectHideFlags: 0

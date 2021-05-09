@@ -46,6 +46,9 @@ public class GameMaster : MonoBehaviour
 
     [SerializeField] private ResultUI m_resultUI = null;
 
+	[SerializeField] private GameObject m_objVirtualPadUI = null;
+	[SerializeField] private GameObject m_objButtonUI = null;
+
 
     [System.Serializable]
     public class BornData
@@ -149,9 +152,12 @@ public class GameMaster : MonoBehaviour
         }
         m_percentTable[m_percentTable.Length - 1] = PERCENT_BASE;
 
+		// ボタンUI非表示 
+		m_objVirtualPadUI.SetActive(false);
+		m_objButtonUI.SetActive(false);
 
 
-        yield return null;
+		yield return null;
 
         // ゲームタイトルへ
         StartCoroutine(CoStepGameTitle());
@@ -215,7 +221,12 @@ public class GameMaster : MonoBehaviour
         // ゲーム用UI表示ON 
         m_gameUiNode.SetActive(true);
 
-        m_gameTime = GAME_TIME;
+		// ボタンUI表示 
+		m_objVirtualPadUI.SetActive(true);
+		m_objButtonUI.SetActive(true);
+
+
+		m_gameTime = GAME_TIME;
 
         while (0 <= m_gameTime)
         {
@@ -226,8 +237,12 @@ public class GameMaster : MonoBehaviour
         // ゲーム用UI表示OFF 
         m_gameUiNode.SetActive(false);
 
-        // リザルトへ 
-        StartCoroutine(CoStepResult());
+		// ボタンUI非表示 
+		m_objVirtualPadUI.SetActive(false);
+		m_objButtonUI.SetActive(false);
+
+		// リザルトへ 
+		StartCoroutine(CoStepResult());
 
     }
 
